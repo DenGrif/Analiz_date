@@ -1,23 +1,20 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import time
 import csv
-
-# Указываем путь до драйвера Chrome
-#PATH = 'path_to_your_chrome_driver/chromedriver.exe'
 
 # Запускаем браузер
 driver = webdriver.Chrome()
 
-# Открываем страницу с объявлениями о сдаче квартир
-url = 'https://www.cian.ru/snyat-kvartiru-1-komn-ili-2-komn/'
+# Открываем страницу с объявлениями о продаже
+url = 'https://divan.ru/category/divany-i-kresla'
 driver.get(url)
 
-# Ждем несколько секунд, чтобы страница загрузилась полностью
-time.sleep(20)
-
-# Находим все элементы, содержащие цены
-prices_elements = driver.find_elements(By.XPATH, "//span[@data-mark='MainPrice']/span")
+# Ждем появления всех элементов с ценами
+wait = WebDriverWait(driver, 20)
+prices_elements = wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'span[data-testid="price"]')))
 
 # Создаем список для хранения цен
 prices = []
@@ -27,7 +24,7 @@ for price_element in prices_elements:
     prices.append(price_element.text)
 
 # Сохраняем результаты в CSV-файле
-with open('cian_prices.csv', mode='w', newline='', encoding='utf-8') as file:
+with open('divany_prices04.csv', mode='w', newline='', encoding='utf-8') as file:
     writer = csv.writer(file)
     # Добавляем заголовок
     writer.writerow(['Цена'])
@@ -37,3 +34,5 @@ with open('cian_prices.csv', mode='w', newline='', encoding='utf-8') as file:
 
 # Закрываем браузер после завершения работы
 driver.quit()
+
+# Рабочий код
